@@ -1,2 +1,2 @@
 # Beggining_PHP
-My Proects while learning PHP
+My Projects while learning PHP
