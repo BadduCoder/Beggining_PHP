@@ -1,69 +1,117 @@
+<!--PHP Code Begins-->
+
 <?php
-  ini_set('display_errors',true);
-  //Including connection file for connection with database.
-  include 'connection.php';
+	if(session_status() == PHP_SESSION_NONE )
+		session_start();
+	include 'connection.php';
+	$FNameErr=$LNameErr=$EmailErr=$PasswordErr=$UsernameErr="";
+	//Registration Code Starts Here.
+	if(isset($_POST["Register"]))
+	{
+	if(empty($_POST["FirstName"]))
+		$FNameErr = "First Name shouldn't be empty";
+	else
+		$FirstName= test_input($_POST["FirstName"]);
+	if(empty($_POST["LastName"]))
+		$LNameErr = "Last name shouldn't be empty";
+	else 
+		$LastName = test_input($_POST["LastName"]);
+	if(!filter_var($_POST["Email"],FILTER_VALIDATE_EMAIL))
+		$EmailErr = "Enter valid Email";
+	else
+		$Email = $_POST["Email"];
+	if($_POST["Password"]===$_POST["CPassword"])
+		$Password = md5($_POST["Password"]);
+	else	
+		$PasswordErr = "Passwords do not match.";
+	
+	//Inserting registration data into table
+	if(isset($FirstName)&&isset($LastName)&&isset($Email)&&isset($Password))
+	{
+		$Query = "INSERT INTO userlist (FirstName, LastName, Email, Password) VALUES ('$FirstName', '$LastName', '$Email', '$Password');";
+		$run = mysqli_query($conn, $Query);
+		if(!$run)
+		{
+			echo "Error Inserting Details into Table.";
+		}
+	}
+	}
+	
+	function test_input($data)
+	{
+		$data = trim($data);
+		$data = stripslashes($data);
+		$data = htmlspecialchars($data);
+		return $data;
+	}
+	//LOGIN Code Starts Here
+	if(isset($_POST["Login"]))
+	{
+		if(empty($_POST["Username"]))
+			$Username = "Username Cannot be Empty. (Your Email is your username)";
+		else
+			$Username = test_input($_POST["Username"]);
+		if(empty($_POST["Password"]))
+			$PasswordErr = "Password can't be empty.";
+		else
+			$Password=md5($_POST("Password"));
+		
+		$Query = "SELECT * FROM UserList WHERE Email = '$Username' AND Password = '$Password';";
+		$result = mysqli_query($conn, $Query);
+		$count = mysqli_num_rows($result);
+		if($count = 1)
+		{
+			$_SESSION["GEmail"]=$Username;
+			header("location: dashboard.php");
+		}
+		else
+		{
+			echo "Error! Multiple Records Found!";
+		}
+	}
+?>
+	
+<!--PHP code ends here, HTML Begins -->
 
-  //Checking whether the submit button is pressed.
-  $error1 = "";
-  if(isset($_POST['submit']))
-  {
-    //Storing all input data in variables.
-    $FName = trim($_POST['FName']);
-    $LName = trim($_POST['LName']);
-    $Email = trim($_POST['Email']);
-    $Password = $_POST['Password'];
-    $CPassword = $_POST['CPassword'];
-    //Now Verifying the values of all variables.
-    if(!filter_var($Email, FILTER_VALIDATE_EMAIL))
-    {
-        $error1 = "Enter a valid Email Address.";
-    }
-    elseif($Password!==$CPassword)
-    {
-        $error1 = "Passwords don't match.";
-    }
-    else {
-      $error1 = "Successfully Registered!";
-      $insertQuery = 'INSERT INTO User_List(FirstName, LastName, Email, Password) VALUES ("$FName","$LName","$Email","$Password")';
-      mysqli_query($conn, $insertQuery);
-
-    }
-
-  }
- ?>
-
-<!Doctype html>
+<!Doctype HTML>
 <html>
-  <head>
-    <title> Baddu Login System </title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-
-  <body>
-    <div id ='error'>
-      <?php
-            echo $error1;
-       ?>
-    </div>
-    <div id='MainContent'>
-      This is My first website with Login and database features! Stay Calm and Enjoy.
-      <div id='Form'>
-        <form method="POST" action="index.php">
-        First Name:<br/>
-        <input type='text' name='Fname' /> <br/><br/>
-        Last Name:<br/>
-        <input type='text' name='Lname'/><br/><br/>
-        Email:<br/>
-        <input type='text' name='Email'/><br/><br/>
-        Password:<br/>
-        <input type='password' name='password'/><br/><br/>
-        Confirm Password:<br/>
-        <input type='password' name='Cpassword'/><br/><br/>
-
-        <input type='submit' name='Submit' value='Submit' /><br/>
-        </form>
-      </div>
-    </div>
-
-  </body>
+<head>
+	<title>Simple Database System</title>
+</head>
+<body>
+	<!--LOGIN FORM-->
+	<div id="LoginForm">
+		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+			Username (Email) : </br>
+			<input type="text" name="Username" /> </br>
+			Password : </br>
+			<input type="password" name="LPassword" /></br>
+			<input type="submit" value="Login" name="Login" /></br></br>
+		</form>
+	</div>
+	<!--REGISTRATION FORM-->
+	<div id="RegistrationForm">
+		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+			First Name : </br>
+			<input type="text" name="FirstName" />
+			<span class="Error"> <?php echo $FNameErr ?> </span>
+			</br>
+			Last Name : </br>
+			<input type="text" name="LastName" />
+			<span class="Error"> <?php echo $LNameErr ?> </span>
+			</br>
+			Email : </br>
+			<input type="text" name="Email" />
+			<span class="Error"> <?php echo $EmailErr ?> </span>
+			</br>
+			Password : </br>
+			<input type="password" name="Password" /></br>
+			Confirm Password : </br>
+			<input type="password" name="CPassword" />
+			<span class="Error"> <?php echo $PasswordErr ?> </span>
+			</br>
+			<input type="submit" value="Register" name="Register" /></br></br>
+		</form>
+	</div>
+</body>
 </html>
