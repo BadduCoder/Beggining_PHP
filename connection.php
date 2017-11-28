@@ -1,8 +1,9 @@
 <?php
-  $conn = mysqli_connect('localhost','root','toor123','BadduRegistration');
 
-  if(mysqli_connect_errno())
-  {
-    echo "Error While Connectng to database \n Error Description: ".mysqli_connect_errno();
-  }
+	$conn = mysqli_connect("localhost","root","","php_prac");
+	if(mysqli_connect_errno())
+	{
+		echo "Error Connecting to Database".mysqli_connect_error(); 
+	}
+
 ?>
