@@ -4,7 +4,11 @@
 	if(session_status() == PHP_SESSION_NONE )
 		session_start();
 	include 'connection.php';
-	$FNameErr=$LNameErr=$EmailErr=$PasswordErr=$UsernameErr="";
+	if(isset($_COOKIE["UserCookie"]))
+	{
+		header('location:dashboard.php');
+	}
+	$FNameErr=$LNameErr=$EmailErr=$LPasswordErr=$PasswordErr=$Username=$UsernameErr=$LoginErr="";
 	//Registration Code Starts Here.
 	if(isset($_POST["Register"]))
 	{
@@ -16,8 +20,19 @@
 		$LNameErr = "Last name shouldn't be empty";
 	else 
 		$LastName = test_input($_POST["LastName"]);
-	if(!filter_var($_POST["Email"],FILTER_VALIDATE_EMAIL))
-		$EmailErr = "Enter valid Email";
+	
+	//Email Verification
+	$Dummy = $_POST['Email'];
+	$Email2 = "SELECT * from UserList WHERE Email='$Dummy';";
+	$run2 = mysqli_query($conn, $Email2);
+	$CountEmail = mysqli_num_rows($run2);
+	if(!filter_var($_POST["Email"],FILTER_VALIDATE_EMAIL)|| $CountEmail >0)
+	{
+		if($CountEmail)
+			$EmailErr = "Email Already in Use";
+		else
+			$EmailErr = "Enter valid Email";
+	}
 	else
 		$Email = $_POST["Email"];
 	if($_POST["Password"]===$_POST["CPassword"])
@@ -48,26 +63,29 @@
 	if(isset($_POST["Login"]))
 	{
 		if(empty($_POST["Username"]))
-			$Username = "Username Cannot be Empty. (Your Email is your username)";
+			$UsernameErr = "Username Cannot be Empty. (Your Email is your username)";
 		else
 			$Username = test_input($_POST["Username"]);
-		if(empty($_POST["Password"]))
-			$PasswordErr = "Password can't be empty.";
+		if(empty($_POST["LPassword"]))
+			$LPasswordErr = "Password can't be empty.";
 		else
-			$Password=md5($_POST("Password"));
+		{
+			$Password=md5($_POST["LPassword"]);
+			$Query = "SELECT * FROM UserList WHERE Email = '$Username' AND Password = '$Password';";
+			$result = mysqli_query($conn, $Query);
+			$count = mysqli_num_rows($result);
+			if($count == 1)
+			{
+				$_SESSION["GEmail"]=$Username;
+				setcookie("UserCookie",$Username,time()+3600,'/');
+				header("location: dashboard.php");
+			}
+			else
+			{
+				$LoginErr = "Email (or) Password Wrong! Please Retry.";
+			}
+		}
 		
-		$Query = "SELECT * FROM UserList WHERE Email = '$Username' AND Password = '$Password';";
-		$result = mysqli_query($conn, $Query);
-		$count = mysqli_num_rows($result);
-		if($count = 1)
-		{
-			$_SESSION["GEmail"]=$Username;
-			header("location: dashboard.php");
-		}
-		else
-		{
-			echo "Error! Multiple Records Found!";
-		}
 	}
 ?>
 	
@@ -83,9 +101,10 @@
 	<div id="LoginForm">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
 			Username (Email) : </br>
-			<input type="text" name="Username" /> </br>
+			<input type="text" name="Username" /><span class='Error'><?php echo $UsernameErr  ?></br></span> </br>
 			Password : </br>
-			<input type="password" name="LPassword" /></br>
+			<input type="password" name="LPassword" /><span class='Error'><?php echo $LPasswordErr ?></br></span></br>
+			<span class='Error'><?php echo $LoginErr ?></br></span>
 			<input type="submit" value="Login" name="Login" /></br></br>
 		</form>
 	</div>
