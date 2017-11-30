@@ -5,7 +5,8 @@
 	if(isset($_POST["logout"]))
 	{
 		session_unset();
-		header("Location: index.php");
+		setcookie("UserCookie",$Username,time()-3600,'/');
+		header('Location:index.php');
 	}
 ?>
 <!Doctype html>
@@ -13,7 +14,7 @@
 <title>User Dashboard</title>
 </head>
 <body>
-	Welcome to Dashboard! <?php echo " ".$_SESSION["GEmail"]; ?>
+	Welcome to Dashboard! <?php echo " ".$_SESSION['GEmail'];?>
 	<form method="POST" action="<?php htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 	<input type="submit" name="logout" Value="Log Out" />
 	</form>
