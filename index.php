@@ -8,6 +8,7 @@
 	{
 		header('location:dashboard.php');
 	}
+
 	$FNameErr=$LNameErr=$EmailErr=$LPasswordErr=$PasswordErr=$Username=$UsernameErr=$LoginErr="";
 	//Registration Code Starts Here.
 	if(isset($_POST["Register"]))
@@ -95,17 +96,28 @@
 <html>
 <head>
 	<title>Simple Database System</title>
+	<link rel="stylesheet" href="style.css" />
+	<!--Bootstrap 3 linking-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!--Bootstrap 3 linking ends here-->
 </head>
 <body>
+	<!--Normal content goes here-->
+	
+	<center><h1>Welcome To Social Network 007</h1></center>
+	
+	<!--Normal Content Ends here-->
 	<!--LOGIN FORM-->
 	<div id="LoginForm">
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
 			Username (Email) : </br>
-			<input type="text" name="Username" /><span class='Error'><?php echo $UsernameErr  ?></br></span> </br>
+			<input type="text" name="Username" /><span class='Error'></br><?php echo $UsernameErr  ?></br></span>
 			Password : </br>
-			<input type="password" name="LPassword" /><span class='Error'><?php echo $LPasswordErr ?></br></span></br>
+			<input type="password" name="LPassword" /><span class='Error'></br><?php echo $LPasswordErr ?></br></span>
 			<span class='Error'><?php echo $LoginErr ?></br></span>
-			<input type="submit" value="Login" name="Login" /></br></br>
+			<input type="submit" value="Login" class="btn btn-info" name="Login" /></br></br>
 		</form>
 	</div>
 	<!--REGISTRATION FORM-->
@@ -113,23 +125,23 @@
 		<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
 			First Name : </br>
 			<input type="text" name="FirstName" />
-			<span class="Error"> <?php echo $FNameErr ?> </span>
+			<span class="Error"></br> <?php echo $FNameErr ?> </span>
 			</br>
 			Last Name : </br>
 			<input type="text" name="LastName" />
-			<span class="Error"> <?php echo $LNameErr ?> </span>
+			<span class="Error"></br> <?php echo $LNameErr ?> </span>
 			</br>
 			Email : </br>
 			<input type="text" name="Email" />
-			<span class="Error"> <?php echo $EmailErr ?> </span>
+			<span class="Error"></br> <?php echo $EmailErr ?> </span>
 			</br>
 			Password : </br>
-			<input type="password" name="Password" /></br>
+			<input type="password" name="Password" /></br></br>
 			Confirm Password : </br>
 			<input type="password" name="CPassword" />
-			<span class="Error"> <?php echo $PasswordErr ?> </span>
+			<span class="Error"></br> <?php echo $PasswordErr ?> </span>
 			</br>
-			<input type="submit" value="Register" name="Register" /></br></br>
+			<input type="submit" value="Register" class="btn btn-success" name="Register" /></br></br>
 		</form>
 	</div>
 </body>
