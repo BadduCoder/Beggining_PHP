@@ -1,0 +1,33 @@
+body
+{
+	background-image:url('bg.png');
+	background-size: 100%;
+}
+#LoginForm
+{
+	border: hidden 5px black;
+	position: absolute;
+	padding: 10px;
+	left: 5%;
+}
+
+#RegistrationForm
+{
+	border: hidden 5px black;
+	padding: 10px;
+	position: absolute;
+	left: 80%;
+	width: 20%;
+}
+input
+{
+	width: 200px;
+}
+.btn
+{
+	margin: 15px 3px 3px 3px;
+}
+.Error
+{
+	color: red;
+}
